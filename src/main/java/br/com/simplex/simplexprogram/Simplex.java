@@ -10,17 +10,25 @@ public class Simplex {
         this.matrizInicial = matrizInicial;
     }
 
-    /*Percorre a linha objetiva e retorna o índice da primeira coluna com valor negativo; retorna -1 caso não
+    /*Percorre a linha objetiva e retorna o índice da coluna com maior valor negativo; retorna -1 caso não
     encontre nenhum valor negativo nesta linha.*/
-    public static int encontrarColunaQueSai(double[][] matriz) {
+    public static int encontrarColunaPivot(double[][] matriz) {
         int linhaObjetiva = matriz.length - 1;
+        int indiceColunaPivot = -1;
+        double menorNegativo = 0;
+
         for (int coluna = 0; coluna < matriz[linhaObjetiva].length; coluna++) {
-            if (matriz[linhaObjetiva][coluna] < 0) {
-                return coluna;
+            double valorAtual = matriz[linhaObjetiva][coluna];
+
+            if (valorAtual < 0 && valorAtual < menorNegativo) {
+                menorNegativo = valorAtual;
+                indiceColunaPivot = coluna;
             }
         }
-        return -1;
+
+        return indiceColunaPivot;
     }
+
 
     /*A partir do índice de uma coluna da tabela, esse método divide os elementos da coluna b (última coluna) com os
     elementos da coluna do índice repassado, e insere os elementos em um array, que é retornada ao finalizar. Os
@@ -66,39 +74,23 @@ public class Simplex {
         return indiceMenorNaoNegativo;
     }
 
-    public static void escalonarColuna(double[][] matriz, int coluna, double pivot) {
-        int linhas = matriz.length;
+    /* Método para realizar o escalonamento da matriz. Em um primeiro momento é feita a normalização da linha pivot e,
+     em seguida, o escalonamento das outras linhas.*/
+    public static void escalonamento(double[][] matriz, int linhaPivot, int colunaPivot) {
+        double valorPivot = matriz[linhaPivot][colunaPivot];
+        for (int j = 0; j < matriz[0].length; j++) {
+            matriz[linhaPivot][j] /= valorPivot;
+        }
 
-        // Iterar sobre cada linha da coluna
-        for (int i = 0; i < linhas; i++) {
-            // Verificar se a linha é a linha do pivot
-            if (matriz[i][coluna] != pivot) {
-                // Escalonar a linha usando o pivot
-                matriz[i][coluna] = matriz[i][coluna] - (matriz[i][coluna] * pivot);
+        for (int i = 0; i < matriz.length; i++) {
+            if (i != linhaPivot) {
+                double value = matriz[i][colunaPivot];
+                for (int j = 0; j < matriz[0].length; j++) {
+                    matriz[i][j] -= value * matriz[linhaPivot][j];
+                }
             }
         }
     }
-
-//    public static double obterUltimoElementoLinha(double[][] matriz, double elemento) {
-//        int linhas = matriz.length;
-//        int colunas = matriz[0].length;
-//
-//        // Iterar sobre cada linha
-//        for (int i = 0; i < linhas; i++) {
-//            // Iterar sobre cada coluna
-//            for (int j = 0; j < colunas; j++) {
-//                // Encontrar o elemento na matriz
-//                if (matriz[i][j] == elemento) {
-//                    // Verificar se não é o último elemento da linha
-//                    if (j < colunas - 1) {
-//                        // Retornar o próximo elemento na mesma linha
-//                        return matriz[i][j + 1];
-//                    }
-//                }
-//            }
-//        }
-//        return Double.NaN;
-//    }
 
 
     public static void main(String[] args) {
@@ -139,15 +131,11 @@ public class Simplex {
                 {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
         });
 
-        while (encontrarColunaQueSai(simplex.matrizInicial) != -1) {
+        while (encontrarColunaPivot(simplex.matrizInicial) != -1) {
 
-            double[] resultado = calcularProcessoDeProducao(simplex.matrizInicial, encontrarColunaQueSai(simplex.matrizInicial));
+            double[] resultado = calcularProcessoDeProducao(simplex.matrizInicial, encontrarColunaPivot(simplex.matrizInicial));
 
-            double pivot = simplex.matrizInicial[encontrarIndiceLinhaPivot(resultado)][encontrarColunaQueSai(simplex.matrizInicial)];
-
-            escalonarColuna(simplex.matrizInicial, 62, encontrarIndiceLinhaPivot(resultado));
-
-            escalonarColuna(simplex.matrizInicial, encontrarColunaQueSai(simplex.matrizInicial), pivot);
+            escalonamento(simplex.matrizInicial, encontrarIndiceLinhaPivot(resultado), encontrarColunaPivot(simplex.matrizInicial));
 
             for (int i = 0; i < simplex.matrizInicial.length; i++) {
                 for (int j = 0; j < simplex.matrizInicial[i].length; j++) {
@@ -158,34 +146,6 @@ public class Simplex {
             System.out.println("\n");
         }
 
-
-//        int colunaNegativa = encontrarColunaQueSai(simplex.matrizInicial);
-
-//        if (colunaNegativa != -1) {
-//            System.out.println("A última linha contém um valor negativo na coluna: " + colunaNegativa);
-//        } else {
-//            System.out.println("A última linha não contém valores negativos.");
-//        }
-//
-//        double[] resultado = calcularProcessoDeProducao(simplex.matrizInicial, 0);
-//
-//        System.out.println("Resultado: " + Arrays.toString(resultado));
-//
-//        int indiceMenorNaoNegativo = encontrarIndiceLinhaPivot(resultado);
-//
-//        System.out.println("Índice do menor valor não negativo: " + indiceMenorNaoNegativo);
-//
-//        double pivot = simplex.matrizInicial[encontrarIndiceLinhaPivot(resultado)][encontrarColunaQueSai(simplex.matrizInicial)];
-//
-//        System.out.println("Pivot: " + pivot);
-//
-//        escalonarColuna(simplex.matrizInicial, encontrarColunaQueSai(simplex.matrizInicial), pivot);
-//
-//        for (int i = 0; i < simplex.matrizInicial.length; i++) {
-//            for (int j = 0; j < simplex.matrizInicial[i].length; j++) {
-//                System.out.print(simplex.matrizInicial[i][j] + " ");
-//            }
-//            System.out.println();
-//        }
+        System.out.println("RESULTADO: " + simplex.matrizInicial[32][62]);
     }
 }
