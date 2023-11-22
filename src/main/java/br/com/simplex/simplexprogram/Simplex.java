@@ -12,9 +12,9 @@ public class Simplex {
 
     /*Percorre a linha objetiva e retorna o índice da coluna com maior valor negativo; retorna -1 caso não
     encontre nenhum valor negativo nesta linha.*/
-    public static int encontrarColunaPivot(double[][] matriz) {
-        int linhaObjetiva = matriz.length - 1;
-        int indiceColunaPivot = -1;
+    public static int encontrarIndiceColunaPivot(double[][] matriz) {
+        int linhaObjetiva = matriz.length - 1; // achar a linha Z
+        int indiceColunaPivot = -1; // garantir que, caso não haja negativo na linha Z, o metodo retorne -1
         double menorNegativo = 0;
 
         for (int coluna = 0; coluna < matriz[linhaObjetiva].length; coluna++) {
@@ -60,7 +60,7 @@ public class Simplex {
 
     /*Percorre um array e retorna o índice do menor valor não negativo. Se não houver valor não negativo, retorna -1. */
     public static int encontrarIndiceLinhaPivot(double[] array) {
-        double menorNaoNegativo = Double.MAX_VALUE;
+        double menorNaoNegativo = Double.MAX_VALUE; //Inicializa com maior valor possível para garantir que primeiro valor da lista será menor e atribuído à essa variável.
         int indiceMenorNaoNegativo = -1;
 
         for (int i = 0; i < array.length; i++) {
@@ -84,14 +84,15 @@ public class Simplex {
 
         for (int i = 0; i < matriz.length; i++) {
             if (i != linhaPivot) {
-                double value = matriz[i][colunaPivot];
+                double valor = matriz[i][colunaPivot];
                 for (int j = 0; j < matriz[0].length; j++) {
-                    matriz[i][j] -= value * matriz[linhaPivot][j];
+                    matriz[i][j] -= valor * matriz[linhaPivot][j];
                 }
             }
         }
     }
 
+    /* Método para imprimir as variáveis finais e solução do problema */
     public void imprimirVariaveis(double[][] matriz) {
         System.out.println("Variáveis finais:");
 
@@ -155,11 +156,11 @@ public class Simplex {
                 {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
         });
 
-        while (encontrarColunaPivot(simplex.matrizInicial) != -1) {
+        while (encontrarIndiceColunaPivot(simplex.matrizInicial) != -1) {
 
-            double[] resultado = calcularProcessoDeProducao(simplex.matrizInicial, encontrarColunaPivot(simplex.matrizInicial));
+            double[] resultado = calcularProcessoDeProducao(simplex.matrizInicial, encontrarIndiceColunaPivot(simplex.matrizInicial));
 
-            escalonamento(simplex.matrizInicial, encontrarIndiceLinhaPivot(resultado), encontrarColunaPivot(simplex.matrizInicial));
+            escalonamento(simplex.matrizInicial, encontrarIndiceLinhaPivot(resultado), encontrarIndiceColunaPivot(simplex.matrizInicial));
 
         }
 
