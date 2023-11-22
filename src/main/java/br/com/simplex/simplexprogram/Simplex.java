@@ -92,6 +92,30 @@ public class Simplex {
         }
     }
 
+    public void imprimirVariaveis(double[][] matriz) {
+        System.out.println("Variáveis finais:");
+
+        int numColunas = Math.min(30, matriz[0].length - 1);
+
+        for (int i = 0; i < numColunas; i++) {
+            double valorVariavel = 0;
+            boolean variavelNaoNula = false;
+
+            for (int j = 0; j < matriz.length - 1; j++) {
+                if (matriz[j][i] != 0) {
+                    valorVariavel = matriz[j][matriz[j].length - 1];
+                    variavelNaoNula = true;
+                    break;
+                }
+            }
+
+            if (variavelNaoNula) {
+                System.out.println("X" + (i + 1) + ": " + valorVariavel);
+            } else {
+                System.out.println("X" + (i + 1) + ": 0");
+            }
+        }
+    }
 
     public static void main(String[] args) {
 
@@ -137,15 +161,18 @@ public class Simplex {
 
             escalonamento(simplex.matrizInicial, encontrarIndiceLinhaPivot(resultado), encontrarColunaPivot(simplex.matrizInicial));
 
-            for (int i = 0; i < simplex.matrizInicial.length; i++) {
-                for (int j = 0; j < simplex.matrizInicial[i].length; j++) {
-                    System.out.print(simplex.matrizInicial[i][j] + " ");
-                }
-                System.out.println();
-            }
-            System.out.println("\n");
         }
 
+        for (int i = 0; i < simplex.matrizInicial.length; i++) {
+            for (int j = 0; j < simplex.matrizInicial[i].length; j++) {
+                System.out.print(simplex.matrizInicial[i][j] + " ");
+            }
+            System.out.println();
+        }
+        System.out.println("\n");
+
         System.out.println("RESULTADO: " + simplex.matrizInicial[32][62]);
+
+        simplex.imprimirVariaveis(simplex.matrizInicial);
     }
 }
